@@ -71,17 +71,12 @@ Crafty.c("Infection", {
 	},
 	
 	grow: function() {
-		//var small_x = SCREEN_WIDTH; var small_y = SCREEN_HEIGHT;
-		//var big_x = 0; var big_y = 0;
-		
-		//var how_many = this.growth_rate * this.volume_count;
 		var how_many = 1 + this.volume_count/75;
 		if (how_many < 1) {how_many = 1}
 		
 		for (j=0; j<how_many; j++) {
 			var index = this.truncate(Math.random() * this.draw_queue.length);
 			var tile_to_draw = this.draw_queue[index];
-			//var pos = this.fromXYToGrid(tile_to_draw[0], tile_to_draw[1]);
 
 			this.draw_queue.splice(index,1);
 
@@ -95,55 +90,6 @@ Crafty.c("Infection", {
 
 			this.grid_state[tile_to_draw[0]][tile_to_draw[1]] = 1;
 		}
-		
-		/*
-		
-		var count = this.just_drawn.length;
-		for (i = 0; i < count; i++) {
-			var item = this.just_drawn.pop()
-			var ix = item[0]; 
-			var iy = item[1];
-			var dir = item[2];
-			//console.log("growing to ", ix, iy);
-			
-			if (ix < small_x) { small_x = ix }
-			if (iy < small_y) { small_y = iy }
-			if (ix > big_x) { big_x = ix }
-			if (iy > big_y) { big_y = iy }
-			
-			if (dir == 'N') { this.draw_queue.push([ix, iy-1, 'N']) }
-			if (dir == 'S') { this.draw_queue.push([ix, iy+1, 'S']) }
-			if (dir == 'E') { this.draw_queue.push([ix+1, iy, 'E']) }
-			if (dir == 'W') { this.draw_queue.push([ix-1, iy, 'W']) }
-			
-			if (dir == 'NE') { 
-				this.draw_queue.push([ix+1, iy-1, 'NE']);
-				this.draw_queue.push([ix+1, iy, 'E']);
-				this.draw_queue.push([ix, iy-1, 'N']);
-			}
-			
-			if (dir == 'SE') { 
-				this.draw_queue.push([ix+1, iy+1, 'SE']);
-				this.draw_queue.push([ix+1, iy, 'E']);
-				this.draw_queue.push([ix, iy+1, 'S']);
-			}
-
-			if (dir == 'SW') { 
-				this.draw_queue.push([ix-1, iy+1, 'SW']);
-				this.draw_queue.push([ix-1, iy, 'W']);
-				this.draw_queue.push([ix, iy+1, 'S']);
-			}
-
-			if (dir == 'NW') { 
-				this.draw_queue.push([ix-1, iy-1, 'NW']);
-				this.draw_queue.push([ix-1, iy, 'W']);
-				this.draw_queue.push([ix, iy-1, 'N']);
-			}
-
-			
-		}
-		//this.border_pixels = new_border;
-		*/
 		
 		this.draw();
 		
@@ -159,7 +105,6 @@ Crafty.c("Infection", {
 	
 	_draw: function(ctx, pos) {		
 		for (col = 0; col < this.grid_state.length; col++) {
-//			console.log(col, this.grid_state[col]);
 			for (row = 0; row < this.grid_state[col].length; row++) {
 				var state = this.grid_state[col][row];
 				if (state == 1) {
@@ -173,24 +118,6 @@ Crafty.c("Infection", {
 			}
 		}
 		
-/*		
-		var count = 1.0 * this.draw_queue.length;
-		for (i = 0; i < count; i++) {
-			var index = this.truncate(Math.random() * this.draw_queue.length);
-			console.log(index);
-			var item = this.draw_queue[index];
-			var ix = item[0]; var iy = item[1];
-			this.just_drawn.push(item);
-			this.draw_queue.splice(index, 1);
-			//console.log("pixeling ", ix, iy);
-			var cur_pix = this.getPixel(this.image_data, ix, iy);
-			//this.setPixel(this.image_data, ix, iy, 161, 0, 226, 0);
-			this.setPixel(this.image_data, ix, iy, cur_pix[0]*4, cur_pix[1]/3, cur_pix[2]*3, cur_pix[3]);
-			
-		}		
-		ctx.putImageData(this.image_data, 0, 0);
-		
-*/
     },
 
 	freeGridSpots: function(col, row) {
@@ -204,6 +131,78 @@ Crafty.c("Infection", {
 		if (this.grid_state[col+1][row+1] == 0) { out.push([col+1, row+1]) }
 		if (this.grid_state[col+1][row-1] == 0) { out.push([col+1, row-1]) }
 		return out;
+	},
+	
+	buildWall: function(ax, ay, bx, by) {
+
+		console.log("ax, ay, bx, by: ", ax, ay, bx, by);
+		
+		if (ax == bx) { ax += -1 }
+		if (ax > bx) { 
+			var tx = ax; var ty = ay;
+			ax = bx; ay = by;
+			bx = tx; by = ty;
+		}
+		
+		var alpha = (by-ay)/(bx-ax);
+		var beta = ay - alpha * ax;
+
+		console.log("ax, ay, bx, by: ", ax, ay, bx, by);
+		console.log(alpha, beta);
+				
+		for (var i = ax; i <= bx; i += (bx-ax)/200) {
+			var pos = this.fromXYToGrid(i, alpha*i+beta);
+			this.grid_state[pos[0]][pos[1]] = 5;
+		}
+		
+
+/*		
+		var small_x = (ax < bx) ? ax : bx;
+		var big_x = (ax <= bx) ? bx : ax;
+		var small_y = (ay < by) ? ay : by;
+		var big_y = (ay <= by) ? by : ay;
+
+		
+		var len_x = big_x - small_x;
+		var len_y = big_y - small_y;
+		
+		var biggest_len = (len_x > len_y) ? len_x : len_y;
+		
+		for (var ix = small_x; ix <= big_x; ix++) {
+			for (var iy = )
+		}
+		
+		if (biggest_len == len_x) {
+			for(var i=small_x; i<)
+		} 
+		
+		
+		var end = (biggest_len == len_x) ? big_y; big_x;
+		
+		
+		
+		
+		var vx = (end_x-start_x)/INFECTION_TILE_SIZE;
+		var vy = (end_y-start_y)/INFECTION_TILE_SIZE;
+
+		console.log("vx, vy: ", vx, vy);		
+		
+		var ix = start_x; var iy = start_y;
+		console.log("start_x, start_y: ", start_x, start_y);
+		
+		while (ix >= start_x && ix <= end_x) {
+			while (iy >= start_y && iy <= end_y) {
+				var pos = this.fromXYToGrid(ix, iy);
+				this.grid_state[pos[0]][pos[1]] = 5;
+//				console.log(pos[0], pos[1]);
+				console.log("ix, iy: ", ix, iy);
+				iy += vy;
+				ix += vx;
+			}
+		}
+*/		
+		
+		
 	},
 
 	truncate: function(_value)
@@ -230,13 +229,3 @@ Crafty.c("Infection", {
 	}
 	
 });
-
-/*
-var volume = 8 * 8;
-var border_pixels = [];
-
-var _infection_start_x = 400;
-var _infection_start_y = 300;
-
-Crafty.e("2D, Canvas, infection").attr({x: })
-*/

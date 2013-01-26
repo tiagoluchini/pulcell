@@ -42,8 +42,11 @@ window.onload = function() {
 //		    line.Line(150, 100, pos.x, pos.y);
 //		});
 	
-		infection = Crafty.e("Infection")
-			.Infection(50, 37);
+		var line = Crafty.e("Line").Line(500, 100, 400, 500);
+		
+		var infection = Crafty.e("Infection")
+			.Infection(50, 37)
+			.buildWall(500, 100, 400, 500);
 
 	});
 	
