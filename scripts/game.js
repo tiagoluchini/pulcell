@@ -6,17 +6,41 @@ window.onload = function() {
 		tile: [0, 0],
 	});
 	
+	Crafty.sprite(800, 600, "sprites/grass.jpg", {
+		grass: [0, 0],
+	});
+	
 	Crafty.scene("loading", function() {
-		Crafty.load(["sprites/tile.png"], function() {
+		Crafty.load(["sprites/tile.png", "sprites/grass.jpg"], function() {
 			Crafty.scene("game");
 		});
 	});
+		
+
+		
+	
 	
 	Crafty.scene("game", function() {
+/*
 		grid = Crafty.e("2D, ObjectGrid, Mouse")
 			.attr({x: GRID_LEFT_MARGIN, y: GRID_TOP_MARGIN, w: GRID_SIZE * GRID_WIDTH, h: GRID_SIZE * GRID_HEIGHT})
 			.ObjectGrid(GRID_SIZE, GRID_WIDTH, GRID_HEIGHT);
 		console.log(grid);
+*/
+
+//		Crafty.background(Crafty.e("2D, Canvas, grass").attr({z:0}));
+		
+
+//		var line = Crafty.e("Line").attr({z:1000});
+//		Crafty.addEvent(this, Crafty.stage.elem, "mousemove", function(e) {
+			
+//		    var pos = Crafty.DOM.translate(e.clientX, e.clientY);
+//		    line.Line(150, 100, pos.x, pos.y);
+//		});
+	
+		infection = Crafty.e("Infection")
+			.Infection(400, 300);
+
 	});
 	
 	Crafty.scene("loading");
