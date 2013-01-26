@@ -1,3 +1,5 @@
+TILE_SIZE = 8;
+
 window.onload = function() {
 	Crafty.init(SCREEN_WIDTH, SCREEN_HEIGHT);
 	Crafty.canvas.init();
@@ -5,6 +7,10 @@ window.onload = function() {
 	Crafty.sprite(50, 50, "sprites/tile.png", {
 		tile: [0, 0],
 	});
+
+    Crafty.sprite(50, 50, "sprites/city.png", {
+        citySprite: [0, 0],
+    });
 	
 	Crafty.sprite(800, 600, "sprites/grass.jpg", {
 		grass: [0, 0],
@@ -21,6 +27,16 @@ window.onload = function() {
 	});
 		
 
+    col_count = SCREEN_WIDTH/TILE_SIZE;
+    row_count = SCREEN_HEIGHT/TILE_SIZE;
+
+    grid_state = new Array(col_count);
+    for (var i = 0; i < col_count; i++) {
+        grid_state[i] = new Array(row_count);
+        for (var j = 0; j < row_count; j++) {
+            grid_state[i][j] = 0;
+        }
+    }
 		
 	
 	
@@ -47,6 +63,10 @@ window.onload = function() {
 		var infection = Crafty.e("Infection")
 			.Infection(50, 37)
 			.buildWall(500, 100, 400, 500);
+
+        var city = Crafty.e("City")
+            .City(37, 36, 6);
+
 
 	});
 	
