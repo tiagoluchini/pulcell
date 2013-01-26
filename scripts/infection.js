@@ -1,5 +1,3 @@
-INFECTION_TILE_SIZE = 8;
-
 Crafty.c("Infection", {
 	
 	ready: true,
@@ -20,16 +18,8 @@ Crafty.c("Infection", {
 		this.start_col = start_col; 
 		this.start_row = start_row;
 		
-		this.col_count = SCREEN_WIDTH/INFECTION_TILE_SIZE;
-		this.row_count = SCREEN_HEIGHT/INFECTION_TILE_SIZE;
-
-		this.grid_state = new Array(this.col_count);
-		for (var i = 0; i < this.col_count; i++) {
-			this.grid_state[i] = new Array(this.row_count);
-			for (var j = 0; j < this.row_count; j++) {
-				this.grid_state[i][j] = 0;
-			}
-		}
+		this.col_count = SCREEN_WIDTH/TILE_SIZE;
+		this.row_count = SCREEN_HEIGHT/TILE_SIZE;
 		this.volume_count = 0;
 		
 		this.draw_queue = [
@@ -52,21 +42,21 @@ Crafty.c("Infection", {
 		this.attr({
 			x: xy[0],
 			y: xy[1],
-			w: xy[0]+INFECTION_TILE_SIZE, h: xy[1]+INFECTION_TILE_SIZE
+			w: xy[0]+TILE_SIZE, h: xy[1]+TILE_SIZE
 		});
 		
 		return this;
 	},
 	
 	fromXYToGrid: function(x, y) {
-		col = Math.floor(x / INFECTION_TILE_SIZE);
-		row = Math.floor(y / INFECTION_TILE_SIZE);
+		col = Math.floor(x / TILE_SIZE);
+		row = Math.floor(y / TILE_SIZE);
 		return [col, row];
 	},
 	
 	fromGridToXY: function(col, row) {
-		x = col * INFECTION_TILE_SIZE;
-		y = row * INFECTION_TILE_SIZE;
+		x = col * TILE_SIZE;
+		y = row * TILE_SIZE;
 		return [x, y];
 	},
 	
@@ -88,7 +78,7 @@ Crafty.c("Infection", {
 				}
 			}
 
-			this.grid_state[tile_to_draw[0]][tile_to_draw[1]] = 1;
+			grid_state[tile_to_draw[0]][tile_to_draw[1]] = 1;
 		}
 		
 		this.draw();
@@ -104,14 +94,14 @@ Crafty.c("Infection", {
 	},
 	
 	_draw: function(ctx, pos) {		
-		for (col = 0; col < this.grid_state.length; col++) {
-			for (row = 0; row < this.grid_state[col].length; row++) {
-				var state = this.grid_state[col][row];
+		for (col = 0; col < grid_state.length; col++) {
+			for (row = 0; row < grid_state[col].length; row++) {
+				var state = grid_state[col][row];
 				if (state == 1) {
 					var xy = this.fromGridToXY(col, row);
 					var tile = Crafty.e("2D, Canvas, infection")
 						.attr({x: xy[0], y: xy[1]});
-					this.grid_state[col][row] = 2;
+					grid_state[col][row] = 2;
 					this.volume_count++;
 				}
 				
@@ -122,14 +112,14 @@ Crafty.c("Infection", {
 
 	freeGridSpots: function(col, row) {
 		var out = [];
-		if (this.grid_state[col-1][row] == 0) { out.push([col-1, row]) }
-		if (this.grid_state[col+1][row] == 0) { out.push([col+1, row]) }
-		if (this.grid_state[col][row-1] == 0) { out.push([col, row-1]) }
-		if (this.grid_state[col][row+1] == 0) { out.push([col, row+1]) }
-		if (this.grid_state[col-1][row-1] == 0) { out.push([col-1, row-1]) }
-		if (this.grid_state[col-1][row+1] == 0) { out.push([col-1, row+1]) }
-		if (this.grid_state[col+1][row+1] == 0) { out.push([col+1, row+1]) }
-		if (this.grid_state[col+1][row-1] == 0) { out.push([col+1, row-1]) }
+		if (grid_state[col-1][row] == 0) { out.push([col-1, row]) }
+		if (grid_state[col+1][row] == 0) { out.push([col+1, row]) }
+		if (grid_state[col][row-1] == 0) { out.push([col, row-1]) }
+		if (grid_state[col][row+1] == 0) { out.push([col, row+1]) }
+		if (grid_state[col-1][row-1] == 0) { out.push([col-1, row-1]) }
+		if (grid_state[col-1][row+1] == 0) { out.push([col-1, row+1]) }
+		if (grid_state[col+1][row+1] == 0) { out.push([col+1, row+1]) }
+		if (grid_state[col+1][row-1] == 0) { out.push([col+1, row-1]) }
 		return out;
 	},
 	
@@ -147,9 +137,9 @@ Crafty.c("Infection", {
 
 		for (var i = ax; i <= bx; i += (bx-ax)/200) {
 			var pos = this.fromXYToGrid(i, alpha*i+beta);
-			this.grid_state[pos[0]][pos[1]] = 5;
+			grid_state[pos[0]][pos[1]] = 5;
 		}
-		
+
 	},
 
 	truncate: function(_value)
