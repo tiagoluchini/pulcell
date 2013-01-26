@@ -10,8 +10,12 @@ window.onload = function() {
 		grass: [0, 0],
 	});
 	
+	Crafty.sprite(8, 8, "sprites/infection.png", {
+		infection: [0, 0],
+	});	
+	
 	Crafty.scene("loading", function() {
-		Crafty.load(["sprites/tile.png", "sprites/grass.jpg"], function() {
+		Crafty.load(["sprites/tile.png", "sprites/grass.jpg", "sprites/infection.png"], function() {
 			Crafty.scene("game");
 		});
 	});
@@ -28,7 +32,7 @@ window.onload = function() {
 		console.log(grid);
 */
 
-//		Crafty.background(Crafty.e("2D, Canvas, grass").attr({z:0}));
+		Crafty.background(Crafty.e("2D, Canvas, grass").attr({z:0}));
 		
 
 //		var line = Crafty.e("Line").attr({z:1000});
@@ -39,7 +43,7 @@ window.onload = function() {
 //		});
 	
 		infection = Crafty.e("Infection")
-			.Infection(400, 300);
+			.Infection(50, 37);
 
 	});
 	

@@ -1,3 +1,5 @@
+INFECTION_TILE_SIZE = 8;
+
 Crafty.c("Infection", {
 	
 	ready: true,
@@ -10,47 +12,80 @@ Crafty.c("Infection", {
         });
     },
     	
-	Infection: function(start_x, start_y) {
+	Infection: function(start_col, start_row) {
 		
-		this.growth_cycle = 200;
+		this.growth_cycle = 1;
 		
-		this.start_x = start_x; 
-		this.start_y = start_y;
+		this.start_col = start_col; 
+		this.start_row = start_row;
 		
-		this.back_image = Crafty.asset("sprites/grass.jpg");
-		
-		//this.current_pixels = [[this.start_x, this.start_y]];
+		this.col_count = SCREEN_WIDTH/INFECTION_TILE_SIZE;
+		this.row_count = SCREEN_HEIGHT/INFECTION_TILE_SIZE;
+
+		this.grid_state = new Array(this.col_count);
+		for (var i = 0; i < this.col_count; i++) {
+			this.grid_state[i] = new Array(this.row_count);
+			for (var j = 0; j < this.row_count; j++) {
+				this.grid_state[i][j] = 0;
+			}
+		}
 		
 		this.draw_queue = [
-			[this.start_x, this.start_y - 1, 'N'],
-			[this.start_x, this.start_y + 1, 'S'],
-			[this.start_x + 1, this.start_y, 'E'],
-			[this.start_x - 1, this.start_y, 'W'],
-			[this.start_x - 1, this.start_y + 1, 'NE'],
-			[this.start_x + 1, this.start_y + 1, 'SE'],
-			[this.start_x + 1, this.start_y - 1, 'SW'],
-			[this.start_x - 1, this.start_y - 1, 'NW']
+			[this.start_col, this.start_row - 1, 'N'],
+			[this.start_col, this.start_row + 1, 'S'],
+			[this.start_col + 1, this.start_row, 'E'],
+			[this.start_col - 1, this.start_row, 'W'],
+			[this.start_col - 1, this.start_row + 1, 'NE'],
+			[this.start_col + 1, this.start_row + 1, 'SE'],
+			[this.start_col + 1, this.start_row - 1, 'SW'],
+			[this.start_col - 1, this.start_row - 1, 'NW']
 		];
 		
-		this.border_pixels = [];
 		this.just_drawn = [];
 
 		this.delay(function() { this.grow(); }, this.growth_cycle);
 		
+		var xy = this.fromGridToXY(this.start_col, this.start_row);
+		
 		this.attr({
-			x: this.start_x,
-			y: this.start_y,
-			w: 1, h: 1
+			x: xy[0],
+			y: xy[1],
+			w: xy[0]+INFECTION_TILE_SIZE, h: xy[1]+INFECTION_TILE_SIZE
 		});
 		
 		return this;
 	},
 	
+	fromXYToGrid: function(x, y) {
+		col = Math.floor(x / INFECTION_TILE_SIZE);
+		row = Math.floor(y / INFECTION_TILE_SIZE);
+		return [col, row]
+	},
+	
+	fromGridToXY: function(col, row) {
+		x = col * INFECTION_TILE_SIZE;
+		y = row * INFECTION_TILE_SIZE;
+		return [x, y];
+	},
+	
 	grow: function() {
-		console.log("growing");
+		//var small_x = SCREEN_WIDTH; var small_y = SCREEN_HEIGHT;
+		//var big_x = 0; var big_y = 0;
 				
-		var small_x = SCREEN_WIDTH; var small_y = SCREEN_HEIGHT;
-		var big_x = 0; var big_y = 0;
+		var index = this.truncate(Math.random() * this.draw_queue.length);
+		var tile_to_draw = this.draw_queue[index];
+		//var pos = this.fromXYToGrid(tile_to_draw[0], tile_to_draw[1]);
+		
+		this.draw_queue.splice(index,1);
+		
+		var free_spots = this.freeGridSpots(tile_to_draw[0], tile_to_draw[1]);
+		for (i = 0; i < free_spots.length; i++) {
+			this.draw_queue.push([free_spots[i][0], free_spots[i][1]]);
+		}
+		
+		this.grid_state[tile_to_draw[0]][tile_to_draw[1]] = 1;
+		
+		/*
 		
 		var count = this.just_drawn.length;
 		for (i = 0; i < count; i++) {
@@ -97,26 +132,37 @@ Crafty.c("Infection", {
 			
 		}
 		//this.border_pixels = new_border;
+		*/
+		
+		this.draw();
 		
 		this.attr({
-			x: small_x,
-			y: small_y,
-			w: big_x - small_x, h: big_y - small_y
+			x: this.x - 1,
+			y: this.y - 1,
+			w: this.w + 1, h: this.h + 1
 		});
 		
 		this.delay(function() { this.grow(); }, this.growth_cycle);
 		return this;
 	},
 	
-	_draw: function(ctx, pos) {
-		console.log("drawing");
-		
-		if (this.image_data == undefined) {
-			ctx.drawImage(this.back_image, 0, 0);
-			this.image_data = ctx.getImageData(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
+	_draw: function(ctx, pos) {		
+		for (col = 0; col < this.grid_state.length; col++) {
+//			console.log(col, this.grid_state[col]);
+			for (row = 0; row < this.grid_state[col].length; row++) {
+				var state = this.grid_state[col][row];
+				if (state == 1) {
+					var xy = this.fromGridToXY(col, row);
+					var tile = Crafty.e("2D, Canvas, infection")
+						.attr({x: xy[0], y: xy[1]});
+					this.grid_state[col][row] = 2;
+				}
+				
+			}
 		}
 		
-		var count = 0.8 * this.draw_queue.length;
+/*		
+		var count = 1.0 * this.draw_queue.length;
 		for (i = 0; i < count; i++) {
 			var index = this.truncate(Math.random() * this.draw_queue.length);
 			console.log(index);
@@ -131,7 +177,22 @@ Crafty.c("Infection", {
 			
 		}		
 		ctx.putImageData(this.image_data, 0, 0);
+		
+*/
     },
+
+	freeGridSpots: function(col, row) {
+		var out = [];
+		if (this.grid_state[col-1][row] == 0) { out.push([col-1, row]) }
+		if (this.grid_state[col+1][row] == 0) { out.push([col+1, row]) }
+		if (this.grid_state[col][row-1] == 0) { out.push([col, row-1]) }
+		if (this.grid_state[col][row+1] == 0) { out.push([col, row+1]) }
+		if (this.grid_state[col-1][row-1] == 0) { out.push([col-1, row-1]) }
+		if (this.grid_state[col-1][row+1] == 0) { out.push([col-1, row+1]) }
+		if (this.grid_state[col+1][row+1] == 0) { out.push([col+1, row+1]) }
+		if (this.grid_state[col+1][row-1] == 0) { out.push([col+1, row-1]) }
+		return out;
+	},
 
 	truncate: function(_value)
 	{
