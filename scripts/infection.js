@@ -14,7 +14,8 @@ Crafty.c("Infection", {
     	
 	Infection: function(start_col, start_row) {
 		
-		this.growth_cycle = 1;
+		this.growth_cycle = 50;
+		this.growth_rate = 0.2;
 		
 		this.start_col = start_col; 
 		this.start_row = start_row;
@@ -29,6 +30,7 @@ Crafty.c("Infection", {
 				this.grid_state[i][j] = 0;
 			}
 		}
+		this.volume_count = 0;
 		
 		this.draw_queue = [
 			[this.start_col, this.start_row - 1, 'N'],
@@ -59,7 +61,7 @@ Crafty.c("Infection", {
 	fromXYToGrid: function(x, y) {
 		col = Math.floor(x / INFECTION_TILE_SIZE);
 		row = Math.floor(y / INFECTION_TILE_SIZE);
-		return [col, row]
+		return [col, row];
 	},
 	
 	fromGridToXY: function(col, row) {
@@ -71,19 +73,28 @@ Crafty.c("Infection", {
 	grow: function() {
 		//var small_x = SCREEN_WIDTH; var small_y = SCREEN_HEIGHT;
 		//var big_x = 0; var big_y = 0;
-				
-		var index = this.truncate(Math.random() * this.draw_queue.length);
-		var tile_to_draw = this.draw_queue[index];
-		//var pos = this.fromXYToGrid(tile_to_draw[0], tile_to_draw[1]);
 		
-		this.draw_queue.splice(index,1);
+		//var how_many = this.growth_rate * this.volume_count;
+		var how_many = 1 + this.volume_count/75;
+		if (how_many < 1) {how_many = 1}
 		
-		var free_spots = this.freeGridSpots(tile_to_draw[0], tile_to_draw[1]);
-		for (i = 0; i < free_spots.length; i++) {
-			this.draw_queue.push([free_spots[i][0], free_spots[i][1]]);
+		for (j=0; j<how_many; j++) {
+			var index = this.truncate(Math.random() * this.draw_queue.length);
+			var tile_to_draw = this.draw_queue[index];
+			//var pos = this.fromXYToGrid(tile_to_draw[0], tile_to_draw[1]);
+
+			this.draw_queue.splice(index,1);
+
+			var free_spots = this.freeGridSpots(tile_to_draw[0], tile_to_draw[1]);
+			for (i = 0; i < free_spots.length; i++) {
+				var tuplet = [free_spots[i][0], free_spots[i][1]];
+				if (this.draw_queue.indexOf(tuplet) == -1) {
+					this.draw_queue.push(tuplet);
+				}
+			}
+
+			this.grid_state[tile_to_draw[0]][tile_to_draw[1]] = 1;
 		}
-		
-		this.grid_state[tile_to_draw[0]][tile_to_draw[1]] = 1;
 		
 		/*
 		
@@ -156,6 +167,7 @@ Crafty.c("Infection", {
 					var tile = Crafty.e("2D, Canvas, infection")
 						.attr({x: xy[0], y: xy[1]});
 					this.grid_state[col][row] = 2;
+					this.volume_count++;
 				}
 				
 			}
