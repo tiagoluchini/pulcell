@@ -135,8 +135,6 @@ Crafty.c("Infection", {
 	
 	buildWall: function(ax, ay, bx, by) {
 
-		console.log("ax, ay, bx, by: ", ax, ay, bx, by);
-		
 		if (ax == bx) { ax += -1 }
 		if (ax > bx) { 
 			var tx = ax; var ty = ay;
@@ -147,61 +145,10 @@ Crafty.c("Infection", {
 		var alpha = (by-ay)/(bx-ax);
 		var beta = ay - alpha * ax;
 
-		console.log("ax, ay, bx, by: ", ax, ay, bx, by);
-		console.log(alpha, beta);
-				
 		for (var i = ax; i <= bx; i += (bx-ax)/200) {
 			var pos = this.fromXYToGrid(i, alpha*i+beta);
 			this.grid_state[pos[0]][pos[1]] = 5;
 		}
-		
-
-/*		
-		var small_x = (ax < bx) ? ax : bx;
-		var big_x = (ax <= bx) ? bx : ax;
-		var small_y = (ay < by) ? ay : by;
-		var big_y = (ay <= by) ? by : ay;
-
-		
-		var len_x = big_x - small_x;
-		var len_y = big_y - small_y;
-		
-		var biggest_len = (len_x > len_y) ? len_x : len_y;
-		
-		for (var ix = small_x; ix <= big_x; ix++) {
-			for (var iy = )
-		}
-		
-		if (biggest_len == len_x) {
-			for(var i=small_x; i<)
-		} 
-		
-		
-		var end = (biggest_len == len_x) ? big_y; big_x;
-		
-		
-		
-		
-		var vx = (end_x-start_x)/INFECTION_TILE_SIZE;
-		var vy = (end_y-start_y)/INFECTION_TILE_SIZE;
-
-		console.log("vx, vy: ", vx, vy);		
-		
-		var ix = start_x; var iy = start_y;
-		console.log("start_x, start_y: ", start_x, start_y);
-		
-		while (ix >= start_x && ix <= end_x) {
-			while (iy >= start_y && iy <= end_y) {
-				var pos = this.fromXYToGrid(ix, iy);
-				this.grid_state[pos[0]][pos[1]] = 5;
-//				console.log(pos[0], pos[1]);
-				console.log("ix, iy: ", ix, iy);
-				iy += vy;
-				ix += vx;
-			}
-		}
-*/		
-		
 		
 	},
 

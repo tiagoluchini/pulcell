@@ -32,7 +32,7 @@ window.onload = function() {
 		console.log(grid);
 */
 
-		Crafty.background(Crafty.e("2D, Canvas, grass").attr({z:0}));
+//		Crafty.background(Crafty.e("2D, Canvas, grass").attr({z:0}));
 		
 
 //		var line = Crafty.e("Line").attr({z:1000});
@@ -42,11 +42,14 @@ window.onload = function() {
 //		    line.Line(150, 100, pos.x, pos.y);
 //		});
 	
-		var line = Crafty.e("Line").Line(500, 100, 400, 500);
+		var wall_builder = Crafty.e("WallBuilder").WallBuilder(undefined)
+			.attr({x:0, y:0, w:SCREEN_WIDTH, h:SCREEN_HEIGHT});
+	
+		var wall = Crafty.e("Line").Line(500, 100, 400, 500);
 		
-		var infection = Crafty.e("Infection")
-			.Infection(50, 37)
-			.buildWall(500, 100, 400, 500);
+//		var infection = Crafty.e("Infection")
+//			.Infection(50, 37)
+//			.buildWall(500, 100, 400, 500);
 
 	});
 	

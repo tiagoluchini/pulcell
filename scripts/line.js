@@ -4,17 +4,23 @@ Crafty.c("Line", {
     _bX: 0,
     _bY: 0,
 
-    ready: true,
+    ready: function() { this._ready },
+
     _lines:[],
     init: function() {
         this.requires("Canvas, 2D");
+
+		this._ready = true;
 
         this.bind("Draw", function(obj) {
             this._draw(obj.ctx, obj.pos);
         });
     },
 
-    Line: function(ax, ay, bx, by) {
+    Line: function(ax, ay, bx, by, color, line_width) {
+		this._color = (color == undefined) ? 'rgb(0,0,0)' : color;
+		this._line_width = (line_width == undefined) ? 5 : line_width;
+	
 		this._aX = ax;
 		this._aY = ay;
 		this._bX = bx;
@@ -23,10 +29,9 @@ Crafty.c("Line", {
 		this.attr({
 			x: ax < bx ? ax : bx,
 			y: ay < by ? ay : by,
-			w: Math.abs(bx - ax) + 1,  //Need to add 1 or veritical lines won't draw
-			h: Math.abs(by - ay) + 1   //Need to add 1 or horizontal lines won't draw
+			w: Math.abs(bx - ax),
+			h: Math.abs(by - ay)
 		});
-		
 	},
 
     _draw: function(ctx, pos) {
@@ -34,8 +39,13 @@ Crafty.c("Line", {
 		ctx.beginPath();
 		ctx.moveTo(this._aX, this._aY);
 		ctx.lineTo(this._bX, this._bY);
-        ctx.strokeStyle = "rgb(0,0,0)";
-		ctx.lineWidth = 5;
+        ctx.strokeStyle = this._color;
+		ctx.lineWidth = this._line_width;
 		ctx.stroke();
-    }
+		this._ready = false;
+    },
+
+	getCoords: function() {
+		return [this._aX, this._aY, this._bX, this._bY];
+	}
 });
