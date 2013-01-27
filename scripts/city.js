@@ -21,6 +21,8 @@ Crafty.c("City", {
 	City: function(start_col, start_row, power) {
 		this.power = power;
 		
+		this.isInvaded=false;
+		
         this.start_col = start_col; 
         this.start_row = start_row;
 
@@ -63,6 +65,16 @@ Crafty.c("City", {
 
     invaded: function() {
         //console.log("City invaded ############");
+        if(this.isInvaded == false){
+            numberOfActiveCities -= 1;
+            
+            if(numberOfActiveCities==0){
+                gameOver();
+            }
+        }
+        
+        this.isInvaded=true;
+        this.wall_builder.killOrders();
     },
 
 	setWallBuilder: function(wb) {

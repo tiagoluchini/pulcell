@@ -32,6 +32,15 @@ function fromGridToXY(col, row) {
 	return [x, y];
 }
 
+function victory(score) {
+        console.log("++++++++++++++++++++++ YOU WON ++++++++++++++++++++++")   
+        console.log("++++++++++++++++++++++ SCORE "+score+" ++++++++++++++++++++++")
+}
+
+function gameOver() {
+        console.log("++++++++++++++++++++++ YOU LOST ++++++++++++++++++++++")   
+}
+
 
 window.onload = function() {
 	Crafty.init(SCREEN_WIDTH, SCREEN_HEIGHT);
@@ -100,23 +109,28 @@ window.onload = function() {
 		event_dispatcher = Crafty.e("EventDispatcher").EventDispatcher()
 			.attr({x:0, y:0, w:SCREEN_WIDTH, h:SCREEN_HEIGHT});
 
+        numberOfActiveCities = 0
+		
 		var city = Crafty.e("City")
     		.City(37, 36, 6);
         var wall_builder = Crafty.e("WallBuilder").WallBuilder(city)
             .attr({x:0, y:0, w:SCREEN_WIDTH, h:SCREEN_HEIGHT});
         city.setWallBuilder(wall_builder);
+        numberOfActiveCities +=1; 
 
         var city2 = Crafty.e("City")
             .City(31, 31, 4);
         var wall_builder2 = Crafty.e("WallBuilder").WallBuilder(city2)
             .attr({x:0, y:0, w:SCREEN_WIDTH, h:SCREEN_HEIGHT});
         city2.setWallBuilder(wall_builder2);
+        numberOfActiveCities +=1;
 
         var city3 = Crafty.e("City")
             .City(61, 31, 11);
         var wall_builder3 = Crafty.e("WallBuilder").WallBuilder(city3)
             .attr({x:0, y:0, w:SCREEN_WIDTH, h:SCREEN_HEIGHT});
         city3.setWallBuilder(wall_builder3);
+        numberOfActiveCities +=1;
 
 		var infection = Crafty.e("Infection")
 			.Infection(50, 37);

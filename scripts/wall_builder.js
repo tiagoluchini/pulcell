@@ -24,28 +24,31 @@ Crafty.c("WallBuilder", {
 		this.parent_city = parent_city;
 		return this;
 	},
+
+    killOrders: function() {
+            // needs to kill orders
+            var count = this.orders.length;
+            for (var i=0; i < count; i++) {
+                this.orders[i].destroy();
+                if (this.indicators[i] != undefined) {
+                    this.indicators[i].destroy();
+                }
+            }
+            this.orders = [];
+            this.indicators = [];
+            this.time_costs = [];
+            this.is_building = false;
+            
+            if (this.connection_line != undefined && this.walls.length == 0) {
+                this.connection_line.destroy();
+            }
+    },
 	
 	activate: function() {
 		document.body.style.cursor = 'crosshair';
 			
 		if (this.is_building) {
-			// needs to kill orders
-			var count = this.orders.length;
-			for (var i=0; i < count; i++) {
-				this.orders[i].destroy();
-				if (this.indicators[i] != undefined) {
-					this.indicators[i].destroy();
-				}
-			}
-			this.orders = [];
-			this.indicators = [];
-			this.time_costs = [];
-			this.is_building = false;
-			
-			if (this.connection_line != undefined && this.walls.length == 0) {
-				this.connection_line.destroy();
-			}
-
+		    this.killOrders();
 		}
 		
 		if (this.last_built_point != undefined) {
