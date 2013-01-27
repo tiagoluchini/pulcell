@@ -1,3 +1,5 @@
+CONNECTION_COLOR = 'rgb(0,0,0)'
+CONNECTION_WIDTH = 2
 BUILD_ORDER_COLOR = 'rgb(0,0,255)'
 BUILD_ORDER_WIDTH = 3
 BUILDING_COLOR = ['rgb(255,0,0)', 'rgb(255,0,255)']
@@ -39,6 +41,10 @@ Crafty.c("WallBuilder", {
 			this.indicators = [];
 			this.time_costs = [];
 			this.is_building = false;
+			
+			if (this.connection_line != undefined && this.walls.length == 0) {
+				this.connection_line.destroy();
+			}
 
 		}
 		
@@ -64,6 +70,12 @@ Crafty.c("WallBuilder", {
 			this.orders.push(Crafty.e("Line"));
 			
 			if (this.next_start == undefined) {
+				this.connection_line = Crafty.e("DashedLine");
+				
+				this.connection_line
+					.DashedLine(this.parent_city.x + this.parent_city.w/2, this.parent_city.y + this.parent_city.h/2, 
+						pos.x, pos.y, CONNECTION_COLOR, CONNECTION_WIDTH);
+				console.log(this.connection_line);
 				this.next_start = [pos.x, pos.y];
 			}
 			
@@ -175,9 +187,9 @@ Crafty.c("WallBuilder", {
 				
 				var power = this.parent_city.power;
 				
-				//console.log(i, distance_to_a, distance_to_b, wall_lenght, power);
+				console.log(i, distance_to_a, distance_to_b, wall_lenght, power);
 				
-				var time_cost = Math.ceil(wall_lenght/power + (distance_to_a + distance_to_b)/power);
+				var time_cost = Math.ceil(wall_lenght/power + (distance_to_a + distance_to_b)/(power/2));
 				this.time_costs.push(time_cost);
 				
 				var ind = Crafty.e("2D, Canvas, Text")
