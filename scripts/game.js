@@ -160,7 +160,7 @@ window.onload = function() {
 	
 	Crafty.scene("game", function() {
 
-		//sounds.heartbeat.play({loops: 9999999});
+		sounds.heartbeat.play({loops: 9999999});
 	    
 		Crafty.background(Crafty.e("2D, Canvas, back").attr({z:0}));
 
@@ -168,6 +168,8 @@ window.onload = function() {
 			.attr({x:0, y:0, w:SCREEN_WIDTH, h:SCREEN_HEIGHT});
 
         numberOfActiveCities = 0
+		
+		
 		
 		var numberOfCities = 3;
 		for(i=0; i<numberOfCities; i++){
