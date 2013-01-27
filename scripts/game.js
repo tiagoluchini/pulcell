@@ -76,7 +76,7 @@ window.onload = function() {
 		play: [0, 0],
 	});
 
-	Crafty.sprite(800, 600, "sprites/end_game.png", {
+	Crafty.sprite(800, 600, "sprites/game_over.png", {
 		end_game: [0, 0],
 	});
 
@@ -197,10 +197,22 @@ window.onload = function() {
 
         numberOfActiveCities = 0
 		
+		
+		
 		var numberOfCities = 3;
 		for(i=0; i<numberOfCities; i++){
+		    var found=false;
+		    while(found==false){
+    		    var tile = generate_random_tile();
+    		    var col = tile[0];
+    		    var row = tile[1];
+    		    var distance=Math.sqrt( (col-col_count/2)*(col-col_count/2)+(row-row_count/2)*(row-row_count/2) );
+    		    console.log(distance);
+    		    if(distance > 22){found = true}
+		    }
+		    
     		var city = Crafty.e("City")
-        		.City(truncate(Math.random() * col_count), truncate(Math.random() * row_count), truncate(Math.random() * 14));
+        		.City(col, row, truncate(Math.random() * 9)+3);
             var wall_builder = Crafty.e("WallBuilder").WallBuilder(city)
                 .attr({x:0, y:0, w:SCREEN_WIDTH, h:SCREEN_HEIGHT});
             city.setWallBuilder(wall_builder);
@@ -216,6 +228,11 @@ window.onload = function() {
 	Crafty.scene("loading");
 }
 
+function generate_random_tile(){
+    var col = truncate(Math.random() * (col_count-20))+10;
+    var row = truncate(Math.random() * (row_count-20))+10;
+    return [col,row];
+}
 
 function truncate(_value)
 {
