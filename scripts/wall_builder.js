@@ -8,7 +8,7 @@ BUILT_WIDTH = 5
 Crafty.c("WallBuilder", {
 
     init: function() {
-        this.requires("Canvas, 2D, Mouse");
+        this.requires("Canvas, 2D");
 
 		this.is_deploying_wall = false;
 		this.walls = [];
@@ -18,16 +18,20 @@ Crafty.c("WallBuilder", {
 
     WallBuilder: function(parent_city) {
 		this.parent_city = parent_city;
-
-		this.bind("DoubleClick", this.onDoubleClick);
-		
-		this.bind("MouseMove", this.onMouseMove);
-			
-		this.bind("Click", function(e) {
+		return this;
+	},
+	
+	activate: function() {
+		document.body.style.cursor = 'crosshair';
+		event_dispatcher.addListener(this, "Click", function(e) {
+			console.log("click wall_builder");
 			var pos = Crafty.DOM.translate(e.clientX, e.clientY);
-			
+
 			if (this.is_deploying_wall) {
 				this.wallRequestConfirmed(pos.x, pos.y);
+			} else {
+				event_dispatcher.addListener(this, "MouseMove", this.onMouseMove);
+				event_dispatcher.addListener(this, "DoubleClick", this.onDoubleClick);
 			}
 			
 			this.is_deploying_wall = true;
@@ -37,25 +41,28 @@ Crafty.c("WallBuilder", {
 				this.ax = this.next_start[0]; this.ay = this.next_start[1];
 			} else {
 				this.ax = pos.x; this.ay = pos.y;
-			}				
-			
+			}
 			
 		});
-	
-		return this;
 	},
 	
+	deactivate: function() {
+		document.body.style.cursor = 'default';
+		event_dispatcher.removeListener(this, "Click");
+	},
+		
 	onMouseMove: function(e) {
-		if (this.is_deploying_wall) {
-			var pos = Crafty.DOM.translate(e.clientX, e.clientY);
-			this.walls[this.walls.length-1].Line(this.ax, this.ay, pos.x, pos.y, BUILD_ORDER_COLOR, BUILD_ORDER_WIDTH);
-		}
+		var pos = Crafty.DOM.translate(e.clientX, e.clientY);
+		this.walls[this.walls.length-1].Line(this.ax, this.ay, pos.x, pos.y, BUILD_ORDER_COLOR, BUILD_ORDER_WIDTH);
 	},
 	
 	onDoubleClick: function(e) {
 		var pos = Crafty.DOM.translate(e.clientX, e.clientY);
 		if (this.is_deploying_wall) {
 			this.is_deploying_wall = false;
+			event_dispatcher.removeListener(this, "MouseMove");
+			event_dispatcher.removeListener(this, "DoubleClick");
+			
 			this.wallRequestConfirmed(pos.x, pos.y);
 			
 			for (var i=0; i<this.walls.length-2; i++) {
@@ -85,6 +92,7 @@ Crafty.c("WallBuilder", {
 				this.indicators.push(ind);
 			}
 			
+			this.deactivate();
 		}
 	},
 	

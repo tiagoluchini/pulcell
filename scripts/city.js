@@ -1,18 +1,8 @@
 
 Crafty.c("City", {
 	
-	ready: true,
-	
 	init: function() {
-        this.requires("Canvas, 2D, Delay");
-
-        //this.bind("Draw", function(obj) {
-        //    this._draw(obj.ctx, obj.pos);
-        //});
-
-        this.bind("Click", function(e) {
-        } );
-    
+        this.requires("Canvas, 2D");
     },
     	
     fromXYToGrid: function(x, y) {
@@ -39,10 +29,9 @@ Crafty.c("City", {
 		} else {
 			size = 8;
 		}
-		
+
 		this.start_col = start_col; 
 		this.start_row = start_row;
-		//this.draw();
 
         var xy = this.fromGridToXY(this.start_col, this.start_row);
         var city_sprite = Crafty.e("2D, Canvas, citySprite")
@@ -54,13 +43,18 @@ Crafty.c("City", {
     		    grid_state[start_col+i][start_row+j]=6;
     		}
         }
+
+		event_dispatcher.addListener(this, "Click", function(e) { 
+			console.log('click city');
+			this.wall_builder.activate();
+			return true;
+		})
+
 		return this;
 	},
 	
-//    _draw: function(ctx, pos) {
-//         var xy = this.fromGridToXY(this.start_col, this.start_row);
-//         console.log("OPA ", xy[0], xy[1]);
-//         var city = Crafty.e("2D, Canvas, citySprite")
-//                    .attr({x: xy[0], y: xy[1]});
-//    },
+	setWallBuilder: function(wb) {
+		this.wall_builder = wb;
+	}
+		
 });

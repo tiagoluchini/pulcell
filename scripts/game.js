@@ -21,7 +21,7 @@ window.onload = function() {
 	});	
 	
 	Crafty.scene("loading", function() {
-		Crafty.load(["sprites/tile.png", "sprites/grass.jpg", "sprites/infection.png"], function() {
+		Crafty.load(["sprites/tile.png", "sprites/grass.jpg", "sprites/infection.png", "sprites/city.png"], function() {
 			Crafty.scene("game");
 		});
 	});
@@ -57,13 +57,19 @@ window.onload = function() {
 //		    line.Line(150, 100, pos.x, pos.y);
 //		});
 
+		event_dispatcher = Crafty.e("EventDispatcher").EventDispatcher()
+			.attr({x:0, y:0, w:SCREEN_WIDTH, h:SCREEN_HEIGHT});
+
+
 		var city = Crafty.e("City")
     		.City(37, 36, 6);
 
 		var wall_builder = Crafty.e("WallBuilder").WallBuilder(city)
 			.attr({x:0, y:0, w:SCREEN_WIDTH, h:SCREEN_HEIGHT});
 	
-		var wall = Crafty.e("Line").Line(500, 100, 400, 500);
+		city.setWallBuilder(wall_builder);
+	
+//		var wall = Crafty.e("Line").Line(500, 100, 400, 500);
 		
 //		var infection = Crafty.e("Infection")
 //			.Infection(50, 37)
