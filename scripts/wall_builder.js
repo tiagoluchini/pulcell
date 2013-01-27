@@ -201,7 +201,7 @@ Crafty.c("WallBuilder", {
 				
 				var ind = Crafty.e("2D, Canvas, Text")
 					.attr({ x: coords[0], y: coords[1] + 5, w: 20, h: 20, z: 10000 }).text(time_cost)
-					.textColor('#000000').textFont({ size: '20px', weight: 'bold' });
+					.textColor('#FFFFFF').textFont({ size: '26px', weight: 'bold' });
 				this.indicators.push(ind);
 			}
 
