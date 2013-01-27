@@ -8,8 +8,8 @@ Crafty.c("Infection", {
     	
 	Infection: function(start_col, start_row) {
 		
-		this.growth_cycle = 500;
-		this.growth_rate = 0.2;
+		this.growth_cycle = 200;
+		this.growth_rate = 0.20;
 		
 		this.start_col = start_col; 
 		this.start_row = start_row;
@@ -66,15 +66,6 @@ Crafty.c("Infection", {
 		return [x, y];
 	},
 
-    lost: function() {
-        console.log("++++++++++++++++++++++ YOU LOST ++++++++++++++++++++++")	
-    },
-
-    won: function() {
-        console.log("++++++++++++++++++++++ YOU WON ++++++++++++++++++++++")   
-        console.log("++++++++++++++++++++++ SCORE "+this.getScore()+" ++++++++++++++++++++++")   
-    },
-
     getScore: function() {
         return this.col_count*this.row_count - this.volume_count;
     },
@@ -86,7 +77,7 @@ Crafty.c("Infection", {
 		for (j=0; j<how_many; j++) {
             //Check end of game WIN
             if( this.draw_queue.length == 0){
-                this.won();    
+                victory(this.getScore());    
                 return;
             }
 
@@ -98,7 +89,7 @@ Crafty.c("Infection", {
                 tile_to_draw[0]==this.col_count ||
                 tile_to_draw[1]==0 ||
                 tile_to_draw[1]==this.row_count){
-                this.lost();    
+                gameOver();    
                 return;
             }
 
