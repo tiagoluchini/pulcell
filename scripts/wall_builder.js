@@ -26,22 +26,23 @@ Crafty.c("WallBuilder", {
 	},
 
     killOrders: function() {
-            // needs to kill orders
-            var count = this.orders.length;
-            for (var i=0; i < count; i++) {
-                this.orders[i].destroy();
-                if (this.indicators[i] != undefined) {
-                    this.indicators[i].destroy();
-                }
-            }
-            this.orders = [];
-            this.indicators = [];
-            this.time_costs = [];
-            this.is_building = false;
-            
-            if (this.connection_line != undefined && this.walls.length == 0) {
-                this.connection_line.destroy();
-            }
+		 // needs to kill orders
+		var count = this.orders.length;
+		
+		for (var i=0; i < count; i++) {
+			this.orders[i].destroy();
+			if (this.indicators[i] != undefined) {
+				this.indicators[i].destroy();
+			}
+		}
+		this.orders = [];
+		this.indicators = [];
+		this.time_costs = [];
+		this.is_building = false;			
+ 
+		if (this.connection_line != undefined && this.walls.length == 0) {
+			this.connection_line.destroy();
+		}
     },
 	
 	activate: function() {
@@ -56,7 +57,6 @@ Crafty.c("WallBuilder", {
 			this.next_start = this.last_built_point;
 			this.orders.push(Crafty.e("Line"));
 		}
-		
 		
 		event_dispatcher.addListener(this, "MouseMove", this.onMouseMove);
 	

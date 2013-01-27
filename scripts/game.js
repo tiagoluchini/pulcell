@@ -32,12 +32,11 @@ function fromGridToXY(col, row) {
 }
 
 function victory(score) {
-        console.log("++++++++++++++++++++++ YOU WON ++++++++++++++++++++++")   
-        console.log("++++++++++++++++++++++ SCORE "+score+" ++++++++++++++++++++++")
+	Crafty.scene("victory");
 }
 
 function gameOver() {
-        console.log("++++++++++++++++++++++ YOU LOST ++++++++++++++++++++++")   
+	Crafty.scene("game_over");
 }
 
 
@@ -81,7 +80,19 @@ window.onload = function() {
 		end_game: [0, 0],
 	});
 
-	Crafty.sprite(146, 51, "sprites/play_again.png", {
+	Crafty.sprite(468, 75, "sprites/game_over.png", {
+		game_over: [0, 0],
+	});
+
+	Crafty.sprite(437, 76, "sprites/loading.png", {
+		loading: [0, 0],
+	});
+
+	Crafty.sprite(359, 76, "sprites/victory.png", {
+		victory: [0, 0],
+	});
+
+	Crafty.sprite(497, 86, "sprites/play_again.png", {
 		play_again: [0, 0],
 	});
 
@@ -116,11 +127,12 @@ window.onload = function() {
 	Crafty.scene("loading", function() {
 		Crafty.load([
 			"sprites/tile.png", "sprites/terrain_03.png", 
-			"sprites/infection.png", "sprites/small_city.png", 
-			"sprites/medium_city.png", "sprites/big_city.png", 
+			"sprites/infection.png", "sprites/citymarker_32.png", 
+			"sprites/citymarker_48", "sprites/citymarker_64.png", 
 			"sprites/heart_anim_01.png", "sprites/menu.png",
 			"sprites/play.png", "sprites/play_again.png",
-			"sprites/end_game.png"
+			"sprites/end_game.png", "sprites/game_over.png",
+			"sprites/victory.png", "sprites/loading.png"
 			], 
 			function() {
 				Crafty.scene("menu");
@@ -131,15 +143,17 @@ window.onload = function() {
 	Crafty.scene("menu", function() {
 		Crafty.background(Crafty.e("2D, Canvas, menu_back").attr({z:0}));
 		
-		var play = Crafty.e("2D, Canvas, play, Mouse").attr({x:50, y:120});
+		//sounds.mood_loop.play();
 		
-		var credits_head = Crafty.e("2D, Canvas, Text")
-				.attr({ x: 20, y: 300, z: 10000 }).text("Credits")
-				.textColor('#FFFFFF').textFont({ size: '32px', weight: 'bold', family: 'Arial', type: '' });
+		var play = Crafty.e("2D, Canvas, play, Mouse").attr({x:80, y:290});
 		
 		var credits = Crafty.e("2D, Canvas, Text")
-				.attr({ x: 20, y: 340, z: 10000 }).text("Tiago Luchini\nEduardo Schnell\nRisto")
-				.textColor('#FFFFFF').textFont({ size: '18px', weight: 'bold', family: 'Arial', type: '' });
+				.attr({ x: 20, y: 500, z: 10000 }).text("Tiago Luchini, Eduardo Schnel")
+				.textColor('#FFFFFF').textFont({ size: '16px', weight: 'normal', family: 'Arial', type: '' });
+
+		var credits2 = Crafty.e("2D, Canvas, Text")
+				.attr({ x: 20, y: 530, z: 10000 }).text("Risto Ihalainen, Paulo Zambarda")
+				.textColor('#FFFFFF').textFont({ size: '16px', weight: 'normal', family: 'Arial', type: '' });
 		
 		play.bind("Click", function() {
 			Crafty.scene("game");
@@ -147,16 +161,30 @@ window.onload = function() {
 		
 	});
 	
-	Crafty.scene("end_game", function() {
+	Crafty.scene("game_over", function() {
 		Crafty.background(Crafty.e("2D, Canvas, end_game").attr({z:0}));
 
-		var play_again = Crafty.e("2D, Canvas, play_again, Mouse").attr({x:50, y:120});
+		var game_over = Crafty.e("2D, Canvas, game_over").attr({x:180, y:220});
 		
-		play.bind("Click", function() {
-			Crafty.scene("game");
+		var play_again = Crafty.e("2D, Canvas, play_again, Mouse").attr({x:150, y:420});
+		
+		play_again.bind("Click", function() {
+			window.location.reload();
 		});
-		
 	});
+
+	Crafty.scene("victory", function() {
+		Crafty.background(Crafty.e("2D, Canvas, end_game").attr({z:0}));
+
+		var victory = Crafty.e("2D, Canvas, victory").attr({x:200, y:220});
+		
+		var play_again = Crafty.e("2D, Canvas, play_again, Mouse").attr({x:150, y:420});
+		
+		play_again.bind("Click", function() {
+			window.location.reload();
+		});
+	});
+
 	
 	Crafty.scene("game", function() {
 

@@ -89,7 +89,7 @@ Crafty.c("Infection", {
                 tile_to_draw[0]==this.col_count ||
                 tile_to_draw[1]==0 ||
                 tile_to_draw[1]==this.row_count){
-                gameOver();    
+                gameOver();
                 return;
             }
 
