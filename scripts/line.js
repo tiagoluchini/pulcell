@@ -29,8 +29,8 @@ Crafty.c("Line", {
 		this.attr({
 			x: ax < bx ? ax : bx,
 			y: ay < by ? ay : by,
-			w: Math.abs(bx - ax),
-			h: Math.abs(by - ay)
+			w: Math.abs(bx - ax) + 1,
+			h: Math.abs(by - ay) + 1
 		});
 	},
 	

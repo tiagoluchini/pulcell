@@ -11,7 +11,9 @@ Crafty.c("WallBuilder", {
         this.requires("Canvas, 2D, Delay");
 
 		this.is_deploying_wall = false;
+		this.is_building = false;
 		this.walls = [];
+		this.orders = [];
 		this.indicators = [];
 		this.time_costs = [];
     },
@@ -23,18 +25,42 @@ Crafty.c("WallBuilder", {
 	
 	activate: function() {
 		document.body.style.cursor = 'crosshair';
+	
+		if (this.next_start != undefined) {
+			this.is_deploying_wall = true;
+			this.orders.push(Crafty.e("Line"));
+		}
+		
+		if (this.is_building) {
+			console.log("kill orders");
+
+			var count = this.orders.length;
+			for (var i=0; i < count; i++) {
+				this.orders[i].destroy();
+				if (this.indicators[i] != undefined) {
+					this.indicators[i].destroy();
+				}
+			}
+			this.orders = [];
+			this.indicators = [];
+			this.time_costs = [];
+			this.is_building = false;
+
+		}
+		
+		event_dispatcher.addListener(this, "MouseMove", this.onMouseMove);
+	
+		event_dispatcher.addListener(this, "DoubleClick", this.onDoubleClick);
+		
 		event_dispatcher.addListener(this, "Click", function(e) {
 			var pos = Crafty.DOM.translate(e.clientX, e.clientY);
 
 			if (this.is_deploying_wall) {
-				this.wallRequestConfirmed(pos.x, pos.y);
-			} else {
-				event_dispatcher.addListener(this, "MouseMove", this.onMouseMove);
-				event_dispatcher.addListener(this, "DoubleClick", this.onDoubleClick);
+				this.next_start = [pos.x, pos.y]
 			}
 			
 			this.is_deploying_wall = true;
-			this.walls.push(Crafty.e("Line"));
+			this.orders.push(Crafty.e("Line"));
 			
 			if (this.next_start) {
 				this.ax = this.next_start[0]; this.ay = this.next_start[1];
@@ -47,16 +73,23 @@ Crafty.c("WallBuilder", {
 	
 	deactivate: function() {
 		document.body.style.cursor = 'default';
+		event_dispatcher.removeListener(this, "MouseMove");
+		event_dispatcher.removeListener(this, "DoubleClick");
 		event_dispatcher.removeListener(this, "Click");
 	},
 		
 	onMouseMove: function(e) {
 		var pos = Crafty.DOM.translate(e.clientX, e.clientY);
-		this.walls[this.walls.length-1].Line(this.ax, this.ay, pos.x, pos.y, BUILD_ORDER_COLOR, BUILD_ORDER_WIDTH);
+		if (this.is_deploying_wall || this.next_start != undefined) {
+			this.orders[this.orders.length-1].Line(this.ax, this.ay, pos.x, pos.y, BUILD_ORDER_COLOR, BUILD_ORDER_WIDTH);
+		}
+		
 	},
 	
 	startBuilding: function() {
-		var wall = this.walls[this.index_building];
+		this.is_building = true;
+		this.index_building = 0
+		var wall = this.orders[this.index_building];
 		wall.setColor(BUILDING_COLOR[0]);
 		wall.setWidth(BUILDING_WIDTH[0]);
 		this.curr_color_index = 0;
@@ -64,10 +97,12 @@ Crafty.c("WallBuilder", {
 	},
 	
 	buildingTick: function() {
-		console.log("ticking :D");
-		var wall = this.walls[this.index_building];
-		var ind = this.indicators[this.index_building];
 		
+		var wall = this.orders[this.index_building];
+		var ind = this.indicators[this.index_building];
+
+		if (wall == undefined || ind == undefined) return;
+				
 		this.time_costs[this.index_building]--;
 		ind.text(this.time_costs[this.index_building]);
 		
@@ -82,17 +117,35 @@ Crafty.c("WallBuilder", {
 			wall.setColor(BUILT_COLOR);
 			wall.setWidth(BUILT_WIDTH);
 			ind.destroy();
-						
-			this.index_building++;
-			var new_wall = this.walls[this.index_building];
-			new_wall = this.walls[this.index_building];
-			new_wall.setColor(BUILDING_COLOR[0]);
-			new_wall.setWidth(BUILDING_WIDTH[0]);
-			this.curr_color_index = 0;
-		}
 			
-		// TODO only add if there is still to be built
-		this.delay(function() { this.buildingTick(); }, 1000);
+			this.walls.push(wall);
+			this.orders.splice(this.index_building, 1)
+			
+			this.index_building++;
+
+			if (this.index_building < this.orders.length-2) {
+				// still has orders
+				var new_wall = this.orders[this.index_building];
+				new_wall = this.orders[this.index_building];
+				new_wall.setColor(BUILDING_COLOR[0]);
+				new_wall.setWidth(BUILDING_WIDTH[0]);
+				
+				this.curr_color_index = 0;				
+				this.delay(function() { this.buildingTick(); }, 1000);
+				
+			} else {
+				// finished order stack
+				var coords = wall.getCoords()
+				this.next_start = [coords[2], coords[3]]
+				this.orders = [];
+				this.indicators = [];
+				this.time_costs = [];
+				this.is_building = false;
+			}
+
+		} else {
+			this.delay(function() { this.buildingTick(); }, 1000);
+		}
 	},
 	
 	onDoubleClick: function(e) {
@@ -102,10 +155,10 @@ Crafty.c("WallBuilder", {
 			event_dispatcher.removeListener(this, "MouseMove");
 			event_dispatcher.removeListener(this, "DoubleClick");
 			
-			this.wallRequestConfirmed(pos.x, pos.y);
+			this.next_start = this.last_built_point
 			
-			for (var i=0; i<this.walls.length-2; i++) {
-				var coords = this.walls[i].getCoords();
+			for (var i=0; i<this.orders.length-2; i++) {
+				var coords = this.orders[i].getCoords();
 				var ax = coords[0]; var ay = coords[1];
 				var bx = coords[2]; var by = coords[3];
 				
@@ -121,7 +174,7 @@ Crafty.c("WallBuilder", {
 				
 				var power = this.parent_city.power;
 				
-				console.log(i, distance_to_a, distance_to_b, wall_lenght, power);
+				//console.log(i, distance_to_a, distance_to_b, wall_lenght, power);
 				
 				var time_cost = Math.ceil(wall_lenght/power + (distance_to_a + distance_to_b)/power);
 				this.time_costs.push(time_cost);
@@ -132,14 +185,9 @@ Crafty.c("WallBuilder", {
 				this.indicators.push(ind);
 			}
 
-			this.index_building = 0;
-			
 			this.deactivate();
 			this.startBuilding();
 		}
 	},
 	
-	wallRequestConfirmed: function(x, y) {
-		this.next_start = [x, y]
-	}
 });

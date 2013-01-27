@@ -45,7 +45,6 @@ Crafty.c("City", {
         }
 
 		event_dispatcher.addListener(this, "Click", function(e) { 
-			console.log('click city');
 			this.wall_builder.activate();
 			return true;
 		})

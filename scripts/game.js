@@ -47,7 +47,7 @@ window.onload = function() {
 		console.log(grid);
 */
 
-		Crafty.background(Crafty.e("2D, Canvas, grass").attr({z:0}));
+//		Crafty.background(Crafty.e("2D, Canvas, grass").attr({z:0}));
 		
 
 //		var line = Crafty.e("Line").attr({z:1000});
@@ -72,6 +72,7 @@ window.onload = function() {
 	
 //		var wall = Crafty.e("Line").Line(500, 100, 400, 500);
 
+/*
         var wall1 = Crafty.e("Line").Line(500, 401, 100, 401);
         var wall3 = Crafty.e("Line").Line(100, 401, 100, 201);
         var wall4 = Crafty.e("Line").Line(100, 201, 400, 201);
@@ -84,7 +85,7 @@ window.onload = function() {
 		infection.buildWall(100, 401, 100, 201)
 		infection.buildWall(100, 201, 400, 201)
 		infection.buildWall(400, 201, 500, 401)
-
+*/
 
 
 	});
