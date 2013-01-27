@@ -1,5 +1,38 @@
 TILE_SIZE = 8;
 
+function buildWallState(ax, ay, bx, by) {
+
+	if (ax == bx) { ax += -1 }
+	if (ax > bx) { 
+		var tx = ax; var ty = ay;
+		ax = bx; ay = by;
+		bx = tx; by = ty;
+	}
+	
+	var alpha = (by-ay)/(bx-ax);
+	var beta = ay - alpha * ax;
+
+	for (var i = ax; i <= bx; i += (bx-ax)/200) {
+		var pos = fromXYToGrid(i, alpha*i+beta);
+		grid_state[pos[0]][pos[1]] = 5;
+	}
+
+}
+
+function fromXYToGrid(x, y) {
+	console.log(x, y);
+	col = Math.floor(x / TILE_SIZE);
+	row = Math.floor(y / TILE_SIZE);
+	return [col, row];
+}
+
+function fromGridToXY(col, row) {
+	x = col * TILE_SIZE;
+	y = row * TILE_SIZE;
+	return [x, y];
+}
+
+
 window.onload = function() {
 	Crafty.init(SCREEN_WIDTH, SCREEN_HEIGHT);
 	Crafty.canvas.init();
@@ -56,7 +89,8 @@ window.onload = function() {
             grid_cities[i][j] = 0;
         }
     }
-		
+	
+	city_selected_state = false;
 	
 	
 	Crafty.scene("game", function() {
@@ -67,7 +101,7 @@ window.onload = function() {
 		console.log(grid);
 */
 
-		Crafty.background(Crafty.e("2D, Canvas, grass").attr({z:0}));
+//		Crafty.background(Crafty.e("2D, Canvas, grass").attr({z:0}));
 		
 
 //		var line = Crafty.e("Line").attr({z:1000});
@@ -98,9 +132,16 @@ window.onload = function() {
             .attr({x:0, y:0, w:SCREEN_WIDTH, h:SCREEN_HEIGHT});
         city3.setWallBuilder(wall_builder3);
 
+		var infection = Crafty.e("Infection")
+			.Infection(50, 37);
+
+		
+
+
 		
 //		var wall = Crafty.e("Line").Line(500, 100, 400, 500);
 
+/*
         var wall1 = Crafty.e("Line").Line(500, 401, 100, 401);
         var wall3 = Crafty.e("Line").Line(100, 401, 100, 201);
         var wall4 = Crafty.e("Line").Line(100, 201, 601, 201);
@@ -111,9 +152,9 @@ window.onload = function() {
 
 		infection.buildWall(500, 401, 100, 401)
 		infection.buildWall(100, 401, 100, 201)
-		infection.buildWall(100, 201, 601, 201)
-		infection.buildWall(601, 201, 500, 401)
-
+		infection.buildWall(100, 201, 400, 201)
+		infection.buildWall(400, 201, 500, 401)
+*/
 
 
 	});
