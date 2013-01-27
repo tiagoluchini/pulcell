@@ -60,7 +60,7 @@ Crafty.c("City", {
 	},
 
     invaded: function() {
-        console.log("City invaded ############");
+        //console.log("City invaded ############");
     },
 
 	setWallBuilder: function(wb) {

@@ -19,6 +19,10 @@ window.onload = function() {
     Crafty.sprite(64, 64, "sprites/big_city.png", {
         citySpriteBig: [0, 0],
     });
+
+    Crafty.sprite(200, 200, "sprites/heart_anim_01.png", {
+        heart: [0, 0, 0, 1, 0, 2, 0, 3, 0, 4, 0, 5, 0, 6],
+    });
 	
 	Crafty.sprite(800, 600, "sprites/grass.jpg", {
 		grass: [0, 0],
@@ -29,7 +33,7 @@ window.onload = function() {
 	});	
 	
 	Crafty.scene("loading", function() {
-		Crafty.load(["sprites/tile.png", "sprites/grass.jpg", "sprites/infection.png", "sprites/small_city.png", "sprites/medium_city.png", "sprites/big_city.png"], function() {
+		Crafty.load(["sprites/tile.png", "sprites/grass.jpg", "sprites/infection.png", "sprites/small_city.png", "sprites/medium_city.png", "sprites/big_city.png", "sprites/heart_anim_01.png"], function() {
 			Crafty.scene("game");
 		});
 	});
@@ -88,21 +92,27 @@ window.onload = function() {
             .attr({x:0, y:0, w:SCREEN_WIDTH, h:SCREEN_HEIGHT});
         city2.setWallBuilder(wall_builder2);
 
+        var city3 = Crafty.e("City")
+            .City(61, 31, 11);
+        var wall_builder3 = Crafty.e("WallBuilder").WallBuilder(city3)
+            .attr({x:0, y:0, w:SCREEN_WIDTH, h:SCREEN_HEIGHT});
+        city3.setWallBuilder(wall_builder3);
+
 		
 //		var wall = Crafty.e("Line").Line(500, 100, 400, 500);
 
         var wall1 = Crafty.e("Line").Line(500, 401, 100, 401);
         var wall3 = Crafty.e("Line").Line(100, 401, 100, 201);
-        var wall4 = Crafty.e("Line").Line(100, 201, 400, 201);
-        var wall5 = Crafty.e("Line").Line(400, 201, 500, 401);
+        var wall4 = Crafty.e("Line").Line(100, 201, 601, 201);
+        var wall5 = Crafty.e("Line").Line(601, 201, 500, 401);
 		
 		var infection = Crafty.e("Infection")
 			.Infection(50, 37);
 
 		infection.buildWall(500, 401, 100, 401)
 		infection.buildWall(100, 401, 100, 201)
-		infection.buildWall(100, 201, 400, 201)
-		infection.buildWall(400, 201, 500, 401)
+		infection.buildWall(100, 201, 601, 201)
+		infection.buildWall(601, 201, 500, 401)
 
 
 
