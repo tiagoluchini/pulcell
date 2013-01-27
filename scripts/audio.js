@@ -4,7 +4,7 @@ soundManager.setup({
   onready: function() {
         soundManager.createSound({
           id: 'heartbeat',
-          url: 'audio/heart_beat.mp3'
+          url: 'audio/heart_beat_horror.ogg'
         });
         soundManager.play('heartbeat');
 
