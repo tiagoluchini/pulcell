@@ -133,17 +133,29 @@ Crafty.c("Infection", {
 		//}
 		//return this;
 	},
-	
+
+
+    freeGridSpot: function(out, col, row) {
+        if (grid_state[col][row] == 0) { 
+            out.push([col, row]) 
+        }else if(grid_state[col][row] == 6){ 
+            grid_cities[col][row].invaded()
+            out.push([col, row]); 
+        }
+    },
+    	
 	freeGridSpots: function(col, row) {
 		var out = [];
-		if (grid_state[col-1][row] == 0) { out.push([col-1, row]) }
-		if (grid_state[col+1][row] == 0) { out.push([col+1, row]) }
-		if (grid_state[col][row-1] == 0) { out.push([col, row-1]) }
-		if (grid_state[col][row+1] == 0) { out.push([col, row+1]) }
-		if (grid_state[col-1][row-1] == 0) { out.push([col-1, row-1]) }
-		if (grid_state[col-1][row+1] == 0) { out.push([col-1, row+1]) }
-		if (grid_state[col+1][row+1] == 0) { out.push([col+1, row+1]) }
-		if (grid_state[col+1][row-1] == 0) { out.push([col+1, row-1]) }
+		
+		this.freeGridSpot(out, col, row+1);
+        this.freeGridSpot(out, col, row-1);
+        this.freeGridSpot(out, col+1, row+1);
+        this.freeGridSpot(out, col+1, row);
+        this.freeGridSpot(out, col+1, row-1);
+        this.freeGridSpot(out, col-1, row+1);
+        this.freeGridSpot(out, col-1, row);
+        this.freeGridSpot(out, col-1, row-1);
+
 		return out;
 	},
 	

@@ -8,8 +8,16 @@ window.onload = function() {
 		tile: [0, 0],
 	});
 
-    Crafty.sprite(50, 50, "sprites/city.png", {
-        citySprite: [0, 0],
+    Crafty.sprite(32, 32, "sprites/small_city.png", {
+        citySpriteSmall: [0, 0],
+    });
+
+    Crafty.sprite(48, 48, "sprites/medium_city.png", {
+        citySpriteMedium: [0, 0],
+    });
+
+    Crafty.sprite(64, 64, "sprites/big_city.png", {
+        citySpriteBig: [0, 0],
     });
 	
 	Crafty.sprite(800, 600, "sprites/grass.jpg", {
@@ -21,7 +29,7 @@ window.onload = function() {
 	});	
 	
 	Crafty.scene("loading", function() {
-		Crafty.load(["sprites/tile.png", "sprites/grass.jpg", "sprites/infection.png", "sprites/city.png"], function() {
+		Crafty.load(["sprites/tile.png", "sprites/grass.jpg", "sprites/infection.png", "sprites/small_city.png", "sprites/medium_city.png", "sprites/big_city.png"], function() {
 			Crafty.scene("game");
 		});
 	});
@@ -34,6 +42,14 @@ window.onload = function() {
         grid_state[i] = new Array(row_count);
         for (var j = 0; j < row_count; j++) {
             grid_state[i][j] = 0;
+        }
+    }
+
+    grid_cities = new Array(col_count);
+    for (var i = 0; i < col_count; i++) {
+        grid_cities[i] = new Array(row_count);
+        for (var j = 0; j < row_count; j++) {
+            grid_cities[i][j] = 0;
         }
     }
 		
@@ -60,16 +76,19 @@ window.onload = function() {
 		event_dispatcher = Crafty.e("EventDispatcher").EventDispatcher()
 			.attr({x:0, y:0, w:SCREEN_WIDTH, h:SCREEN_HEIGHT});
 
-
 		var city = Crafty.e("City")
     		.City(37, 36, 6);
+        var wall_builder = Crafty.e("WallBuilder").WallBuilder(city)
+            .attr({x:0, y:0, w:SCREEN_WIDTH, h:SCREEN_HEIGHT});
+        city.setWallBuilder(wall_builder);
 
-		var wall_builder = Crafty.e("WallBuilder").WallBuilder(city)
-			.attr({x:0, y:0, w:SCREEN_WIDTH, h:SCREEN_HEIGHT});
-	
-		city.setWallBuilder(wall_builder);
+        var city2 = Crafty.e("City")
+            .City(31, 31, 4);
+        var wall_builder2 = Crafty.e("WallBuilder").WallBuilder(city2)
+            .attr({x:0, y:0, w:SCREEN_WIDTH, h:SCREEN_HEIGHT});
+        city2.setWallBuilder(wall_builder2);
 
-	
+		
 //		var wall = Crafty.e("Line").Line(500, 100, 400, 500);
 
         var wall1 = Crafty.e("Line").Line(500, 401, 100, 401);
@@ -91,4 +110,3 @@ window.onload = function() {
 	
 	Crafty.scene("loading");
 }
-
