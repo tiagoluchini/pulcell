@@ -188,12 +188,12 @@ Crafty.c("Infection", {
 		
 		this.freeGridSpot(out, col, row+1);
         this.freeGridSpot(out, col, row-1);
-        this.freeGridSpot(out, col+1, row+1);
+//        this.freeGridSpot(out, col+1, row+1);
         this.freeGridSpot(out, col+1, row);
-        this.freeGridSpot(out, col+1, row-1);
-        this.freeGridSpot(out, col-1, row+1);
+//        this.freeGridSpot(out, col+1, row-1);
+//        this.freeGridSpot(out, col-1, row+1);
         this.freeGridSpot(out, col-1, row);
-        this.freeGridSpot(out, col-1, row-1);
+//        this.freeGridSpot(out, col-1, row-1);
 
 		return out;
 	},
