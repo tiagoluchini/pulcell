@@ -113,8 +113,10 @@ window.onload = function() {
 		
 		var numberOfCities = 3;
 		for(i=0; i<numberOfCities; i++){
+		    var col = truncate(Math.random() * (col_count-20))+10;
+		    var row = truncate(Math.random() * (row_count-20))+10;
     		var city = Crafty.e("City")
-        		.City(truncate(Math.random() * col_count), truncate(Math.random() * row_count), truncate(Math.random() * 14));
+        		.City(col, row, truncate(Math.random() * 14)+1);
             var wall_builder = Crafty.e("WallBuilder").WallBuilder(city)
                 .attr({x:0, y:0, w:SCREEN_WIDTH, h:SCREEN_HEIGHT});
             city.setWallBuilder(wall_builder);
