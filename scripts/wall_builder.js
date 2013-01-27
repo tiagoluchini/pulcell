@@ -127,6 +127,10 @@ Crafty.c("WallBuilder", {
 		if (current_cost == 0) {
 			wall.setColor(BUILT_COLOR);
 			wall.setWidth(BUILT_WIDTH);
+
+			var coords = wall.getCoords();
+
+			buildWallState(coords[0], coords[1], coords[2], coords[3]);
 			ind.destroy();
 			
 			this.walls.push(wall);
@@ -134,7 +138,6 @@ Crafty.c("WallBuilder", {
 			this.indicators.splice(0,1);
 			this.time_costs.splice(0,1);
 			
-			var coords = wall.getCoords();
 			this.next_start = [coords[2], coords[3]];
 			this.last_built_point = [coords[2], coords[3]];
 			
@@ -187,7 +190,7 @@ Crafty.c("WallBuilder", {
 				
 				var power = this.parent_city.power;
 				
-				console.log(i, distance_to_a, distance_to_b, wall_lenght, power);
+				//console.log(i, distance_to_a, distance_to_b, wall_lenght, power);
 				
 				var time_cost = Math.ceil(wall_lenght/power + (distance_to_a + distance_to_b)/(power/2));
 				this.time_costs.push(time_cost);

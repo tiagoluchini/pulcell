@@ -8,7 +8,7 @@ Crafty.c("Infection", {
     	
 	Infection: function(start_col, start_row) {
 		
-		this.growth_cycle = 50;
+		this.growth_cycle = 500;
 		this.growth_rate = 0.2;
 		
 		this.start_col = start_col; 
@@ -40,6 +40,16 @@ Crafty.c("Infection", {
 			y: xy[1],
 			w: xy[0]+TILE_SIZE, h: xy[1]+TILE_SIZE
 		});
+
+        this.heart = Crafty.e("2D, Canvas, SpriteAnimation, heart")
+            .animate('HeartBeating', 0, 0, 6)
+            .animate('HeartBeating', 25, -1);
+
+        this.heart.w = 75;
+        this.heart.h = 75;
+        this.heart.attr({x: xy[0]-this.heart.w/2, y: xy[1]-this.heart.h/2});
+
+        this.heart.z = 1000;
 		
 		return this;
 	},
@@ -118,6 +128,36 @@ Crafty.c("Infection", {
                 .attr({x: xy[0], y: xy[1]});
             grid_state[tile_to_draw[0]][tile_to_draw[1]] = 2;
             this.volume_count++;
+
+            //check space to resize heart
+            for(size_try=this.truncate(row_count/2); size_try>3; size_try--){
+                var contains_alien = 0;
+                for(var row = this.start_row-size_try; row < this.start_row + size_try+1; row++){
+                    if(grid_state[this.start_col - size_try][row] == 2){
+                        contains_alien += 1;
+                    }
+                    if(grid_state[this.start_col + size_try][row] == 2){
+                        contains_alien += 1;
+                    }
+                }
+                for(var col = this.start_col - size_try; col < this.start_col + size_try +1; col++){
+                    if(grid_state[col][this.start_row - size_try] == 2){
+                        contains_alien += 1;
+                    }
+                    if(grid_state[col][this.start_row + size_try] == 2){
+                        contains_alien += 1;
+                    }
+                }
+                var max = (2*size_try+1)*4 -4;
+                if(contains_alien/max>0.6){
+                    new_size = (size_try*2+1)*TILE_SIZE
+                    var xy = this.fromGridToXY(this.start_col, this.start_row);
+                    this.heart.w = new_size;
+                    this.heart.h = new_size;
+                    this.heart.attr({x: xy[0]-this.heart.w/2, y: xy[1]-this.heart.h/2});
+                    break;
+                }
+            }
 		}
 		
 
@@ -128,22 +168,33 @@ Crafty.c("Infection", {
             w: this.w + 1, h: this.h + 1
         });
 		
-		//if(this.volume_count<4000){
-		    this.delay(function() { this.grow(); }, this.growth_cycle);
-		//}
+        this.delay(function() { this.grow(); }, this.growth_cycle);
+
 		//return this;
 	},
-	
+
+
+    freeGridSpot: function(out, col, row) {
+        if (grid_state[col][row] == 0) { 
+            out.push([col, row]) 
+        }else if(grid_state[col][row] == 6){ 
+            grid_cities[col][row].invaded()
+            out.push([col, row]); 
+        }
+    },
+    	
 	freeGridSpots: function(col, row) {
 		var out = [];
-		if (grid_state[col-1][row] == 0) { out.push([col-1, row]) }
-		if (grid_state[col+1][row] == 0) { out.push([col+1, row]) }
-		if (grid_state[col][row-1] == 0) { out.push([col, row-1]) }
-		if (grid_state[col][row+1] == 0) { out.push([col, row+1]) }
-		if (grid_state[col-1][row-1] == 0) { out.push([col-1, row-1]) }
-		if (grid_state[col-1][row+1] == 0) { out.push([col-1, row+1]) }
-		if (grid_state[col+1][row+1] == 0) { out.push([col+1, row+1]) }
-		if (grid_state[col+1][row-1] == 0) { out.push([col+1, row-1]) }
+		
+		this.freeGridSpot(out, col, row+1);
+        this.freeGridSpot(out, col, row-1);
+        this.freeGridSpot(out, col+1, row+1);
+        this.freeGridSpot(out, col+1, row);
+        this.freeGridSpot(out, col+1, row-1);
+        this.freeGridSpot(out, col-1, row+1);
+        this.freeGridSpot(out, col-1, row);
+        this.freeGridSpot(out, col-1, row-1);
+
 		return out;
 	},
 	

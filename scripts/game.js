@@ -1,5 +1,38 @@
 TILE_SIZE = 8;
 
+function buildWallState(ax, ay, bx, by) {
+
+	if (ax == bx) { ax += -1 }
+	if (ax > bx) { 
+		var tx = ax; var ty = ay;
+		ax = bx; ay = by;
+		bx = tx; by = ty;
+	}
+	
+	var alpha = (by-ay)/(bx-ax);
+	var beta = ay - alpha * ax;
+
+	for (var i = ax; i <= bx; i += (bx-ax)/200) {
+		var pos = fromXYToGrid(i, alpha*i+beta);
+		grid_state[pos[0]][pos[1]] = 5;
+	}
+
+}
+
+function fromXYToGrid(x, y) {
+	console.log(x, y);
+	col = Math.floor(x / TILE_SIZE);
+	row = Math.floor(y / TILE_SIZE);
+	return [col, row];
+}
+
+function fromGridToXY(col, row) {
+	x = col * TILE_SIZE;
+	y = row * TILE_SIZE;
+	return [x, y];
+}
+
+
 window.onload = function() {
 	Crafty.init(SCREEN_WIDTH, SCREEN_HEIGHT);
 	Crafty.canvas.init();
@@ -8,8 +41,20 @@ window.onload = function() {
 		tile: [0, 0],
 	});
 
-    Crafty.sprite(50, 50, "sprites/city.png", {
-        citySprite: [0, 0],
+    Crafty.sprite(32, 32, "sprites/small_city.png", {
+        citySpriteSmall: [0, 0],
+    });
+
+    Crafty.sprite(48, 48, "sprites/medium_city.png", {
+        citySpriteMedium: [0, 0],
+    });
+
+    Crafty.sprite(64, 64, "sprites/big_city.png", {
+        citySpriteBig: [0, 0],
+    });
+
+    Crafty.sprite(200, 200, "sprites/heart_anim_01.png", {
+        heart: [0, 0, 0, 1, 0, 2, 0, 3, 0, 4, 0, 5, 0, 6],
     });
 	
 	Crafty.sprite(800, 600, "sprites/grass.jpg", {
@@ -21,7 +66,7 @@ window.onload = function() {
 	});	
 	
 	Crafty.scene("loading", function() {
-		Crafty.load(["sprites/tile.png", "sprites/grass.jpg", "sprites/infection.png", "sprites/city.png"], function() {
+		Crafty.load(["sprites/tile.png", "sprites/grass.jpg", "sprites/infection.png", "sprites/small_city.png", "sprites/medium_city.png", "sprites/big_city.png", "sprites/heart_anim_01.png"], function() {
 			Crafty.scene("game");
 		});
 	});
@@ -34,6 +79,14 @@ window.onload = function() {
         grid_state[i] = new Array(row_count);
         for (var j = 0; j < row_count; j++) {
             grid_state[i][j] = 0;
+        }
+    }
+
+    grid_cities = new Array(col_count);
+    for (var i = 0; i < col_count; i++) {
+        grid_cities[i] = new Array(row_count);
+        for (var j = 0; j < row_count; j++) {
+            grid_cities[i][j] = 0;
         }
     }
 		
@@ -60,23 +113,38 @@ window.onload = function() {
 		event_dispatcher = Crafty.e("EventDispatcher").EventDispatcher()
 			.attr({x:0, y:0, w:SCREEN_WIDTH, h:SCREEN_HEIGHT});
 
-
 		var city = Crafty.e("City")
     		.City(37, 36, 6);
+        var wall_builder = Crafty.e("WallBuilder").WallBuilder(city)
+            .attr({x:0, y:0, w:SCREEN_WIDTH, h:SCREEN_HEIGHT});
+        city.setWallBuilder(wall_builder);
 
-		var wall_builder = Crafty.e("WallBuilder").WallBuilder(city)
-			.attr({x:0, y:0, w:SCREEN_WIDTH, h:SCREEN_HEIGHT});
-	
-		city.setWallBuilder(wall_builder);
+        var city2 = Crafty.e("City")
+            .City(31, 31, 4);
+        var wall_builder2 = Crafty.e("WallBuilder").WallBuilder(city2)
+            .attr({x:0, y:0, w:SCREEN_WIDTH, h:SCREEN_HEIGHT});
+        city2.setWallBuilder(wall_builder2);
 
-	
+        var city3 = Crafty.e("City")
+            .City(61, 31, 11);
+        var wall_builder3 = Crafty.e("WallBuilder").WallBuilder(city3)
+            .attr({x:0, y:0, w:SCREEN_WIDTH, h:SCREEN_HEIGHT});
+        city3.setWallBuilder(wall_builder3);
+
+		var infection = Crafty.e("Infection")
+			.Infection(50, 37);
+
+		
+
+
+		
 //		var wall = Crafty.e("Line").Line(500, 100, 400, 500);
 
 /*
         var wall1 = Crafty.e("Line").Line(500, 401, 100, 401);
         var wall3 = Crafty.e("Line").Line(100, 401, 100, 201);
-        var wall4 = Crafty.e("Line").Line(100, 201, 400, 201);
-        var wall5 = Crafty.e("Line").Line(400, 201, 500, 401);
+        var wall4 = Crafty.e("Line").Line(100, 201, 601, 201);
+        var wall5 = Crafty.e("Line").Line(601, 201, 500, 401);
 		
 		var infection = Crafty.e("Infection")
 			.Infection(50, 37);
@@ -92,4 +160,3 @@ window.onload = function() {
 	
 	Crafty.scene("loading");
 }
-
