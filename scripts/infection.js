@@ -84,7 +84,7 @@ Crafty.c("Infection", {
 		if (how_many < 1) {how_many = 1}
 		
 		for (j=0; j<how_many; j++) {
-            //Check end of game LOST
+            //Check end of game WIN
             if( this.draw_queue.length == 0){
                 this.won();    
                 return;

@@ -84,6 +84,7 @@ Crafty.c("WallBuilder", {
 	
 	deactivate: function() {
 		document.body.style.cursor = 'default';
+		city_selected_state = false;
 		event_dispatcher.removeListener(this, "MouseMove");
 		event_dispatcher.removeListener(this, "DoubleClick");
 		event_dispatcher.removeListener(this, "Click");

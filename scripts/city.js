@@ -50,9 +50,12 @@ Crafty.c("City", {
     		}
         }
 
-		event_dispatcher.addListener(this, "Click", function(e) { 
-			this.wall_builder.activate();
-			return true;
+		event_dispatcher.addListener(this, "Click", function(e) {
+			if (!city_selected_state) {
+				this.wall_builder.activate();
+				city_selected_state = true;
+				return true;
+			}
 		})
 
 		return this;

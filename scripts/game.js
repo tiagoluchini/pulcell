@@ -89,7 +89,8 @@ window.onload = function() {
             grid_cities[i][j] = 0;
         }
     }
-		
+	
+	city_selected_state = false;
 	
 	
 	Crafty.scene("game", function() {
