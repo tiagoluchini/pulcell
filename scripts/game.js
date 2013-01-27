@@ -57,8 +57,8 @@ window.onload = function() {
         heart: [0, 0, 0, 1, 0, 2, 0, 3, 0, 4, 0, 5, 0, 6],
     });
 	
-	Crafty.sprite(800, 600, "sprites/grass.jpg", {
-		grass: [0, 0],
+	Crafty.sprite(800, 600, "sprites/terrain_01.png", {
+		back: [0, 0],
 	});
 	
 	Crafty.sprite(8, 8, "sprites/infection.png", {
@@ -66,7 +66,7 @@ window.onload = function() {
 	});	
 	
 	Crafty.scene("loading", function() {
-		Crafty.load(["sprites/tile.png", "sprites/grass.jpg", "sprites/infection.png", "sprites/small_city.png", "sprites/medium_city.png", "sprites/big_city.png", "sprites/heart_anim_01.png"], function() {
+		Crafty.load(["sprites/tile.png", "sprites/terrain_01.png", "sprites/infection.png", "sprites/small_city.png", "sprites/medium_city.png", "sprites/big_city.png", "sprites/heart_anim_01.png"], function() {
 			Crafty.scene("game");
 		});
 	});
@@ -94,22 +94,8 @@ window.onload = function() {
 	
 	
 	Crafty.scene("game", function() {
-/*
-		grid = Crafty.e("2D, ObjectGrid, Mouse")
-			.attr({x: GRID_LEFT_MARGIN, y: GRID_TOP_MARGIN, w: GRID_SIZE * GRID_WIDTH, h: GRID_SIZE * GRID_HEIGHT})
-			.ObjectGrid(GRID_SIZE, GRID_WIDTH, GRID_HEIGHT);
-		console.log(grid);
-*/
 
-//		Crafty.background(Crafty.e("2D, Canvas, grass").attr({z:0}));
-		
-
-//		var line = Crafty.e("Line").attr({z:1000});
-//		Crafty.addEvent(this, Crafty.stage.elem, "mousemove", function(e) {
-			
-//		    var pos = Crafty.DOM.translate(e.clientX, e.clientY);
-//		    line.Line(150, 100, pos.x, pos.y);
-//		});
+		Crafty.background(Crafty.e("2D, Canvas, back").attr({z:0}));		
 
 		event_dispatcher = Crafty.e("EventDispatcher").EventDispatcher()
 			.attr({x:0, y:0, w:SCREEN_WIDTH, h:SCREEN_HEIGHT});
@@ -134,27 +120,6 @@ window.onload = function() {
 
 		var infection = Crafty.e("Infection")
 			.Infection(50, 37);
-
-		
-
-
-		
-//		var wall = Crafty.e("Line").Line(500, 100, 400, 500);
-
-/*
-        var wall1 = Crafty.e("Line").Line(500, 401, 100, 401);
-        var wall3 = Crafty.e("Line").Line(100, 401, 100, 201);
-        var wall4 = Crafty.e("Line").Line(100, 201, 601, 201);
-        var wall5 = Crafty.e("Line").Line(601, 201, 500, 401);
-		
-		var infection = Crafty.e("Infection")
-			.Infection(50, 37);
-
-		infection.buildWall(500, 401, 100, 401)
-		infection.buildWall(100, 401, 100, 201)
-		infection.buildWall(100, 201, 400, 201)
-		infection.buildWall(400, 201, 500, 401)
-*/
 
 
 	});
