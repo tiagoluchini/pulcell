@@ -33,6 +33,16 @@ Crafty.c("Line", {
 			h: Math.abs(by - ay)
 		});
 	},
+	
+	setColor: function(color) {
+		this._color = color;
+		this.draw();
+	},
+
+	setWidth: function(width) {
+		this._line_width = width;
+		this.draw();
+	},
 
     _draw: function(ctx, pos) {
 		//console.log(pos);

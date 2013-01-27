@@ -1,19 +1,19 @@
 BUILD_ORDER_COLOR = 'rgb(0,0,255)'
 BUILD_ORDER_WIDTH = 3
-BUILDING_COLOR = 'rgb(0,120,255)'
-BUILDING_WIDTH = 5
-BUILT_COLOR = 'rgb(255,255,255)'
+BUILDING_COLOR = ['rgb(255,0,0)', 'rgb(255,0,255)']
+BUILDING_WIDTH = [4, 4]
+BUILT_COLOR = 'rgb(0,0,0)'
 BUILT_WIDTH = 5
 
 Crafty.c("WallBuilder", {
 
     init: function() {
-        this.requires("Canvas, 2D");
+        this.requires("Canvas, 2D, Delay");
 
 		this.is_deploying_wall = false;
 		this.walls = [];
-		this.indicators = []
-		
+		this.indicators = [];
+		this.time_costs = [];
     },
 
     WallBuilder: function(parent_city) {
@@ -24,7 +24,6 @@ Crafty.c("WallBuilder", {
 	activate: function() {
 		document.body.style.cursor = 'crosshair';
 		event_dispatcher.addListener(this, "Click", function(e) {
-			console.log("click wall_builder");
 			var pos = Crafty.DOM.translate(e.clientX, e.clientY);
 
 			if (this.is_deploying_wall) {
@@ -56,6 +55,46 @@ Crafty.c("WallBuilder", {
 		this.walls[this.walls.length-1].Line(this.ax, this.ay, pos.x, pos.y, BUILD_ORDER_COLOR, BUILD_ORDER_WIDTH);
 	},
 	
+	startBuilding: function() {
+		var wall = this.walls[this.index_building];
+		wall.setColor(BUILDING_COLOR[0]);
+		wall.setWidth(BUILDING_WIDTH[0]);
+		this.curr_color_index = 0;
+		this.delay(function() { this.buildingTick(); }, 1000);
+	},
+	
+	buildingTick: function() {
+		console.log("ticking :D");
+		var wall = this.walls[this.index_building];
+		var ind = this.indicators[this.index_building];
+		
+		this.time_costs[this.index_building]--;
+		ind.text(this.time_costs[this.index_building]);
+		
+		this.curr_color_index++;
+		if (this.curr_color_index > 1) this.curr_color_index = 0;
+		wall.setColor(BUILDING_COLOR[this.curr_color_index]);
+		wall.setWidth(BUILDING_WIDTH[this.curr_color_index]);
+		
+		var current_cost = this.time_costs[this.index_building];
+		
+		if (current_cost == 0) {
+			wall.setColor(BUILT_COLOR);
+			wall.setWidth(BUILT_WIDTH);
+			ind.destroy();
+						
+			this.index_building++;
+			var new_wall = this.walls[this.index_building];
+			new_wall = this.walls[this.index_building];
+			new_wall.setColor(BUILDING_COLOR[0]);
+			new_wall.setWidth(BUILDING_WIDTH[0]);
+			this.curr_color_index = 0;
+		}
+			
+		// TODO only add if there is still to be built
+		this.delay(function() { this.buildingTick(); }, 1000);
+	},
+	
 	onDoubleClick: function(e) {
 		var pos = Crafty.DOM.translate(e.clientX, e.clientY);
 		if (this.is_deploying_wall) {
@@ -85,14 +124,18 @@ Crafty.c("WallBuilder", {
 				console.log(i, distance_to_a, distance_to_b, wall_lenght, power);
 				
 				var time_cost = Math.ceil(wall_lenght/power + (distance_to_a + distance_to_b)/power);
+				this.time_costs.push(time_cost);
 				
 				var ind = Crafty.e("2D, Canvas, Text")
 					.attr({ x: coords[0], y: coords[1] + 5, w: 20, h: 20, z: 10000 }).text(time_cost)
 					.textColor('#000000').textFont({ size: '20px', weight: 'bold' });
 				this.indicators.push(ind);
 			}
+
+			this.index_building = 0;
 			
 			this.deactivate();
+			this.startBuilding();
 		}
 	},
 	
