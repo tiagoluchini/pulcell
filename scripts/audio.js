@@ -11,5 +11,3 @@ soundManager.setup({
         console.log("opa b")        ;
   }
 });
-
-console.log("opa a")
