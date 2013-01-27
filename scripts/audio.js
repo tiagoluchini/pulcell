@@ -1,6 +1,6 @@
 
 sounds = {}
-
+/*
 soundManager.setup({
   url: 'swf/',
   onready: function() {
@@ -11,3 +11,4 @@ soundManager.setup({
     });
   }
 });
+*/
