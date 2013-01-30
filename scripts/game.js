@@ -148,7 +148,7 @@ window.onload = function() {
 		var play = Crafty.e("2D, Canvas, play, Mouse").attr({x:80, y:290});
 		
 		var credits = Crafty.e("2D, Canvas, Text")
-				.attr({ x: 20, y: 500, z: 10000 }).text("Tiago Luchini, Eduardo Schnel")
+				.attr({ x: 20, y: 500, z: 10000 }).text("Tiago Luchini, Eduardo Schnell")
 				.textColor('#FFFFFF').textFont({ size: '16px', weight: 'normal', family: 'Arial', type: '' });
 
 		var credits2 = Crafty.e("2D, Canvas, Text")
